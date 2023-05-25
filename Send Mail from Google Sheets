@@ -1,38 +1,39 @@
 /**
- * Invia mail precompilata
+ * main permette di smistare le mail ricevute in input. Se il valore di controllo è diverso da 1 allora va ad elaborare ed inviare le mail. Altrimenti va alla riga successiva.
+ * Se la mail è presente nel database allora verrà inviata una mail con un link al sondaggio precompilato. Altrimenti verrà allegato il sondaggio non precompilato.
  *
- * @return In base al valore di controllo richiama la funzione di inviomailprecompilata o quella di inviomail
+ * @return In base al valore di controllo richiama la funzione di inviaMailPrecompilata o quella di invioMail
  * @customfunction
  */
 function main(){
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Controllo"); 
-  var range = sheet.getDataRange();
-  var data = range.getValues();
+  var ssC = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetC = ssC.getSheetByName("Controllo"); 
+  var rangeC = sheetC.getDataRange();
+  var dataC = rangeC.getValues();
 
-  var ss1 = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet1 = ss1.getSheetByName("Database"); 
-  var range1 = sheet1.getDataRange();
-  var data1 = range1.getValues();
+  var ssD = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetD = ssD.getSheetByName("Database"); 
+  var rangeD = sheetD.getDataRange();
+  var dataD = rangeD.getValues();
 
-  for(var i = 1; i < data.length; i++){
-    var control = data[i][2];
-    var mail = data[i][1];
+  for(var i = 1; i < dataC.length; i++){
+    var controllo = dataC[i][2];
+    var mailC = dataC[i][1];
     var a= "C"+(i+1);
 
-    if(control!=1){
-      for(var j=1; j<data1.length; j++){
-        var mail1 = data1[j][0];
-        if(mail===mail1){
+    if(controllo!=1){
+      for(var j=1; j<dataD.length; j++){
+        var mailD = dataD[j][0];
+        if(mailC===mailD){
           console.log("Trovato");
           inviaMailPrecompilata(j);
         }
       }
-      var cella=sheet.getRange(a).setValue(1);
+      var cella=sheetC.getRange(a).setValue(1);
     }
-    if(control!=1){
+    if(controllo!=1){
       inviaMail(i);
-      var cella=sheet.getRange(a).setValue(1);
+      var cella=sheetC.getRange(a).setValue(1);
     }
     
   }
@@ -52,7 +53,6 @@ function inviaMailPrecompilata(numero) {
   var range = sheet.getDataRange();
   var data = range.getValues();
 
-
   var nome = data[numero][2]; // Indice della colonna contenente i nomi 
   var email = ""+ data[numero][0]; // Indice della colonna contenente le email 
   var link = data[numero][4]; // Indice della colonna contenente i link associati ai nomi
@@ -63,10 +63,6 @@ function inviaMailPrecompilata(numero) {
                 "" +link + "\n\n" +
                 "Grazie,\n" +
                 "Diletta";
-
-  console.log(nome);
-  console.log(email);
-
 
   MailApp.sendEmail(
     (email),
