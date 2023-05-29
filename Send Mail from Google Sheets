@@ -20,18 +20,22 @@ function main(){
     var controllo = dataC[i][2];
     var mailC = dataC[i][1];
     var a= "C"+(i+1);
+    var b=0;
 
-    if(controllo!=1){
-      for(var j=1; j<dataD.length; j++){
-        var mailD = dataD[j][0];
-        if(mailC===mailD){
-          console.log("Trovato");
-          inviaMailPrecompilata(j);
-        }
+    
+    for(var j=1; j<dataD.length && controllo!=1; j++){
+      var mailD = dataD[j][0];
+      if(mailC===mailD){
+        console.log("Precompilato");
+        inviaMailPrecompilata(j);
+        var cella=sheetC.getRange(a).setValue(1);
+        b=1;
       }
-      var cella=sheetC.getRange(a).setValue(1);
     }
-    if(controllo!=1){
+    console.log(b);
+
+    if(b==0 && controllo!=1){
+      console.log("Normale");
       inviaMail(i);
       var cella=sheetC.getRange(a).setValue(1);
     }
