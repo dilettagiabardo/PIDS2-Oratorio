@@ -1,1 +1,82 @@
+/**
+ * after chiama createPdf, che va a creare il pdf in base ai dati inviati dal modulo, per poi mandarli ad inviaMailPdf, che invierà una mail con allegato il file Pdf
+ *
+ * @param e= dati contenuti all'invio del modulo
+ * @return invia la mail con il pdf allegato
+ * @customfunction
+ */
+function afterSubmit(e) {
 
+  const info = e.namedValues; //recupero le informazioni inviate dal modulo
+  console.log(info);
+  const pdfFile = createPdf(info); //chiamo createPdf che va a crearmi il pdf 
+  const entryRow = e.range.getRow();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Raccolta").getRange(entryRow, 44).setValue(pdfFile.getUrl()); //aggiungo al foglio di raccolta dei dati un nuovo valore alla colonna 44 che conterrà il link al pdf, in modo tale da permettere un recupero immediato
+
+  inviaMailPdf(e.namedValues['Indirizzo email'][0], pdfFile); //viene chiamato inviaMailPdf che invia la mail con il allegato il pdf creato
+
+}
+
+
+/**
+ * Crea il pdf con i dati contenuti in info
+ *
+ * @param info=contiene i dati che verranno sostituiti nel template originale
+ * @return restituisce il pdf completo
+ * @customfunction
+ */
+function createPdf(info){
+
+  const pdfFolder = DriveApp.getFolderById("18L5c8y3dS5uUbUDEpruukVNR8cbi1Lqm");
+  const tempFolder = DriveApp.getFolderById("18DPxu5xnKUNNn4I1JjOHGNKC1l9orMMv");
+  const templateDoc = DriveApp.getFileById("1vmsxAwa8tzYreIms6yPF39ZVzyKhI-6GrowAiF1Lrww"); 
+
+  const newTempFile = templateDoc.makeCopy(tempFolder); //Viene creata una copia del documento contenente le parole da sostituire
+
+  const openDoc = DocumentApp.openById(newTempFile.getId());
+  const body = openDoc.getBody(); //il documento viene aperto ed avviene la sostituizione dei dati
+  body.replaceText("{{Nome e cognome del genitore}}", info['Nome e cognome del genitore'][0]);
+  body.replaceText("{{Luogo di nascita genitore}}", info['Luogo di nascita genitore'][0]);
+  body.replaceText("{{Data di nascita genitore}}", info['Data di nascita genitore'][0]);
+  body.replaceText("{{Indirizzo}}", info['Indirizzo'][0]);
+  body.replaceText("{{CAP}}", info['CAP'][0]);
+  body.replaceText("{{Città}}", info['Città'][0]);
+  body.replaceText("{{Provincia}}", info['Provincia'][0]);
+  body.replaceText("{{Telefono padre}}", info['Telefono padre'][0]);
+  body.replaceText("{{Telefono madre}}", info['Telefono madre'][0]);
+  body.replaceText("{{Nome del figlio/a}}", info['Nome del figlio/a'][0]);
+  body.replaceText("{{Cognome del figlio/a}}", info['Cognome del figlio/a'][0]);
+  body.replaceText("{{Luogo di nascita}}", info['Luogo di nascita'][0]);
+  body.replaceText("{{Classe frequentata nell anno scolastico 2021-22}}", info['Classe frequentata nell anno scolastico 2021-22'][0]);
+  body.replaceText("{{taglia magliette}}", info['taglia magliette'][0]);
+  body.replaceText("{{Indirizzo email}}", info['Indirizzo email'][0]);
+  
+  openDoc.saveAndClose(); //Il documento viene salvato e chiuso
+
+  const blobPdf = newTempFile.getAs(MimeType.PDF); //Viene salvato il file come pdf
+  const pdfFile = pdfFolder.createFile(blobPdf).setName(info['Nome del figlio/a'][0] + " " + info['Cognome del figlio/a'][0]  ); //Il file viene nominato con il nome e il cognome del bambino
+  tempFolder.removeFile(newTempFile); //il documento copiato ed usato per salvare il pdf viene cancellato
+
+  return pdfFile;
+}
+
+
+
+/**
+ * Invia mail con l'allegato
+ *
+ * @param email= contiene la mail a cui inviare il contenuto   
+ *        pdfFile=contiene il pdf da inviare
+ * @return invia la mail con il l'allegato
+ * @customfunction
+ */
+function inviaMailPdf(email, pdfFile){
+
+  GmailApp.sendEmail(email, "Iscrizione", "Buongiorno,\n\n" +
+                "In allegato trova il file pdf compilato con i dati dell'iscrizione all'oratorio estivo. \n\n E' pregato di stamparlo e firmarlo in vista dellla riunione." + "\n\n" +
+                "Grazie,\n" +
+                "Padre Andrea Gamba", {
+                  attachments: [pdfFile],
+                  name: 'Diletta'
+                });
+}
