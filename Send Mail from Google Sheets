@@ -1,47 +1,60 @@
 /**
- * main permette di smistare le mail ricevute in input. Se il valore di controllo è diverso da 1 allora va ad elaborare ed inviare le mail. Altrimenti va alla riga successiva.
- * Se la mail è presente nel database allora verrà inviata una mail con un link al sondaggio precompilato. Altrimenti verrà allegato il sondaggio non precompilato.
+ * after permette di chiamare main dando in input i dati inviati dal modulo
  *
+ * @param e= dati contenuti all'invio del modulo
  * @return In base al valore di controllo richiama la funzione di inviaMailPrecompilata o quella di invioMail
  * @customfunction
  */
-function main(){
-  var ssC = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetC = ssC.getSheetByName("Controllo"); 
-  var rangeC = sheetC.getDataRange();
-  var dataC = rangeC.getValues();
+function after(e) {
 
+  const info = e.namedValues; //recupero le informazioni inviate dal modulo
+  main(info);
+
+}
+
+/**
+ * main permette di smistare le mail ricevute in input. 
+ * Se la mail è presente nel database allora verrà inviata una mail con un link al sondaggio precompilato. Altrimenti verrà allegato il sondaggio non precompilato.
+ *
+ * @param info= dati contenuti all'invio del modulo
+ * @return In base al valore di controllo richiama la funzione di inviaMailPrecompilata o quella di invioMail
+ * @customfunction
+ */
+function main(info){
   var ssD = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetD = ssD.getSheetByName("Database"); 
-  var rangeD = sheetD.getDataRange();
-  var dataD = rangeD.getValues();
+  var sheetD = ssD.getSheetByName("Database");  //Nome del foglio Google Sheets che contiene il database
 
-  for(var i = 1; i < dataC.length; i++){
-    var controllo = dataC[i][2];
-    var mailC = dataC[i][1];
-    var a= "C"+(i+1);
-    var b=0;
+  var mailC = info['Mail'][0]; //Recupero la mail in input
+  var controllo=0; 
+  var figli = 0;
+  var rigaMail = 0;
+  var fakeMail = 0;
+  var lista =[];
 
-    
-    for(var j=1; j<dataD.length && controllo!=1; j++){
-      var mailD = dataD[j][0];
-      if(mailC===mailD){
-        console.log("Precompilato");
-        inviaMailPrecompilata(j);
-        var cella=sheetC.getRange(a).setValue(1);
-        b=1;
-      }
+  for(var i=0; i<4 && fakeMail!=-1 ; i++){ //Controllo chi ha più di un figlio. E se trovo più di un figlio salvo il valore della riga dentro lista
+    var past = rigaMail;
+    var colonnaMail = sheetD.getRange(rigaMail+1, 44, sheetD.getLastRow(), 1).getValues(); 
+    rigaMail = colonnaMail.flat().indexOf(mailC)+1;
+
+    fakeMail=rigaMail-1;
+
+    if(rigaMail!=-1 && rigaMail!=0){
+      rigaMail=rigaMail+past;
+      figli=figli+1;
+      controllo=1;
+      lista.push(fakeMail+past);
     }
-    console.log(b);
-
-    if(b==0 && controllo!=1){
-      console.log("Normale");
-      inviaMail(i);
-      var cella=sheetC.getRange(a).setValue(1);
-    }
-    
   }
 
+  if(figli==1){ //se figli è uguale ad uno, quindi il caso del figlio unico, allora si chiama inviaMailPrecompilata passando il primo elemento della lista
+    inviaMailPrecompilata(lista[0], mailC); 
+  }
+  if(figli>1){ //se figli è maggiore ad uno, quindi il caso di fratelli/sorelle, allora si chiama inviaMailPrecompilataFigli passando la lista
+    inviaMailPrecompilataFigli(lista, mailC, figli);
+  }
+  if(controllo==0){  //se controllo è uguale a 0, quindi non è stata trovata alcuna corrispondenza nel databse, viene inviata una semplice mail tramite inviaMail
+    inviaMail(mailC);
+  }   
 }
 
 /**
@@ -51,25 +64,59 @@ function main(){
  * @return invia la mail con il link precompilato al sondaggio
  * @customfunction
  */
-function inviaMailPrecompilata(numero) {
+function inviaMailPrecompilata(numero, mail) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Database"); 
+  var sheet = ss.getSheetByName("Database"); //Nome del foglio Google Sheets che contiene il database
   var range = sheet.getDataRange();
   var data = range.getValues();
 
-  var nome = data[numero][2]; // Indice della colonna contenente i nomi 
-  var email = ""+ data[numero][0]; // Indice della colonna contenente le email 
-  var link = data[numero][4]; // Indice della colonna contenente i link associati ai nomi
+  var nome = data[numero][1]; // Indice della colonna contenente i nomi 
+  var link = data[numero][44]; // Indice della colonna contenente i link associati ai nomi
 
   var oggetto = "Iscrizione";
-  var corpo = "Buongiorno " + nome + ",\n\n" +
-                "Di seguito trova il form precompilato rispetto agli anni precedenti:\n" +
-                "" +link + "\n\n" +
+  var corpo = "Buongiorno " + nome + " \n\n" +
+                "Di seguito trova il form precompilato per l'iscrizione all'Oratorio estivo:\n" +
+                "\n" + link  + "\n\n" +
                 "Grazie,\n" +
-                "Diletta";
+                "Padre Andrea Gamba";
 
   MailApp.sendEmail(
-    (email),
+    (mail),
+    (oggetto),
+    (corpo)
+  );   
+}
+
+/**
+ * Invia mail precompilata
+ *
+ * @param numero=il numero di riga dove si trova la mail
+ * @return invia la mail con il link precompilato al sondaggio
+ * @customfunction
+ */
+function inviaMailPrecompilataFigli(lista, mail, figli) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Database"); //Nome del foglio Google Sheets che contiene il database
+  var range = sheet.getDataRange();
+  var data = range.getValues();
+  var figliLink = "";
+
+  for(var i=0; i<figli; i++){ // vado a creare il corpo della mail aggiungendo per ogni figlio il link corrispondente.
+    var nomeGenitore = data[lista[i]][1]; // Indice della colonna contenente i nomi del genitore
+    var nomeFigli = data[lista[i]][10]; //Indice della colonna contenente i nomi del bambino
+    var link = data[lista[i]][44]; // Indice della colonna contenente i link associati ai nomi
+
+    figliLink= figliLink + "Di seguito trova il form precompilato per "+ nomeFigli +":\n"  + link + "\n\n";
+  }
+
+  var oggetto = "Iscrizione Oratorio Buttrio 2023/2024";
+  var corpo = "Buongiorno " + nomeGenitore + " \n\n" +
+                figliLink + "\n" +
+                "Grazie,\n" +
+                "Padre Andrea Gamba";
+
+  MailApp.sendEmail(
+    (mail),
     (oggetto),
     (corpo)
   );   
@@ -80,28 +127,25 @@ function inviaMailPrecompilata(numero) {
  *
  * @param numero=il numero di riga dove si trova la mail
  * @return invia la mail con il link al sondaggio
- * @customfunction
+ * @customfunction 
  */
-function inviaMail(numero) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Controllo"); 
-  var range = sheet.getDataRange();
-  var data = range.getValues();
+function inviaMail(mail) {
   
-  var email = data[numero][1]; // Indice della colonna contenente le email 
-
   var oggetto = "Iscrizione";
   var corpo = "Buongiorno,\n\n" +
-                "Di seguito trova il form da compilare per l'iscrizione:\n" +
-                "https://docs.google.com/forms/d/e/1FAIpQLSdpRdVVnOoQnIGOP5o6LqwDBf4QN1L6KfGYoFsVx3FDRprwWw/viewform?usp=sf_link" + "\n\n" +
+                "Di seguito trova il form da compilare per l'iscrizione all'Oratorio estivo:\n" +
+                "https://docs.google.com/forms/d/e/1FAIpQLSe0QqZn516LhxBuGLAYdTJDQTszQLp8aHj1DeYuNrhZ_sMWsw/viewform?usp=sf_link" + "\n\n" +
                 "Grazie,\n" +
-                "Diletta";
+                "Padre Andrea Gamba";
 
   MailApp.sendEmail(
-    (email),
+    (mail),
     (oggetto),
     (corpo)
-  ); 
+  );   
 }
+
+
+
 
 
