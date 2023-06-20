@@ -18,6 +18,8 @@ Quindi il procedimento per l'utente è il seguente:
 5. Inserire i propri dati nel secondo form;
 6. Controllare la casella posta, aprire la mail "Pdf Iscrizione Oratorio" e recuperare il file pdf.
 
+
+
 Per la realizzazione del progetto sono stati creati due file di App Script, il primo(Send Mail from Google Sheets) collegato al primo form ed il secondo al secondo form(Send Mail with Pdf Attachment).
 
 Il primo permette l'invio della Mail in base a quanti figli ci sono ed in base al fatto che la mail sia o meno presente nel database.
