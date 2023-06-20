@@ -9,11 +9,9 @@ Le richieste da parte del parrocco sono state due:
 2. Inviare il documento creato con i dati relativi all'iscrizione, in formato pdf, tramite mail all'utente. Questo per permettere la stampa e la firma in vista della raccolta dei documenti da parte del parroco.
 
 Quindi il procedimento per l'utente è il seguente:
-1. 
-  1.1 Se l'utente è stato iscritto negli anni precedenti: Inserire la Mail precedentemente usata nel primo form;
-  1.2 Se l'utente non è stato iscritto negli anni precedenti: Inserire la propria Mail nel primo form.
-2. 
-  2.1 Controllare la casella posta, aprire la mail "Iscrizione Oratorio" e copiare ed incollare il link precompilato in una nuova pagina;
+1. 1.1 Se l'utente è stato iscritto negli anni precedenti: Inserire la Mail precedentemente usata nel primo form;
+   1.2 Se l'utente non è stato iscritto negli anni precedenti: Inserire la propria Mail nel primo form.
+2. 2.1 Controllare la casella posta, aprire la mail "Iscrizione Oratorio" e copiare ed incollare il link precompilato in una nuova pagina;
   2.2 Controllare la casella posta, aprire la mail "Iscrizione Oratorio" e copiare ed incollare il link in una nuova pagina.
 3. Inserire i propri dati nel secondo form;
 4. Controllare la casella posta, aprire la mail "Pdf Iscrizione Oratorio" e recuperare il file pdf.
