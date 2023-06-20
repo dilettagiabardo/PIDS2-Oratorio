@@ -27,9 +27,9 @@ function afterSubmit(e) {
  */
 function createPdf(info){
 
-  const pdfFolder = DriveApp.getFolderById("18L5c8y3dS5uUbUDEpruukVNR8cbi1Lqm");
-  const tempFolder = DriveApp.getFolderById("18DPxu5xnKUNNn4I1JjOHGNKC1l9orMMv");
-  const templateDoc = DriveApp.getFileById("1vmsxAwa8tzYreIms6yPF39ZVzyKhI-6GrowAiF1Lrww"); 
+  const pdfFolder = DriveApp.getFolderById("ID");
+  const tempFolder = DriveApp.getFolderById("ID");
+  const templateDoc = DriveApp.getFileById("ID"); 
 
   const newTempFile = templateDoc.makeCopy(tempFolder); //Viene creata una copia del documento contenente le parole da sostituire
 
@@ -75,7 +75,7 @@ function inviaMailPdf(email, pdfFile){
   GmailApp.sendEmail(email, "Iscrizione", "Buongiorno,\n\n" +
                 "In allegato trova il file pdf compilato con i dati dell'iscrizione all'oratorio estivo. \n\n E' pregato di stamparlo e firmarlo in vista dellla riunione." + "\n\n" +
                 "Grazie,\n" +
-                "Padre Andrea Gamba", {
+                "Diletta", {
                   attachments: [pdfFile],
                   name: 'Diletta'
                 });
