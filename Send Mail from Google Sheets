@@ -78,7 +78,7 @@ function inviaMailPrecompilata(numero, mail) {
                 "Di seguito trova il form precompilato per l'iscrizione all'Oratorio estivo:\n" +
                 "\n" + link  + "\n\n" +
                 "Grazie,\n" +
-                "Padre Andrea Gamba";
+                "Diletta";
 
   MailApp.sendEmail(
     (mail),
@@ -109,11 +109,11 @@ function inviaMailPrecompilataFigli(lista, mail, figli) {
     figliLink= figliLink + "Di seguito trova il form precompilato per "+ nomeFigli +":\n"  + link + "\n\n";
   }
 
-  var oggetto = "Iscrizione Oratorio Buttrio 2023/2024";
+  var oggetto = "Iscrizione ";
   var corpo = "Buongiorno " + nomeGenitore + " \n\n" +
                 figliLink + "\n" +
                 "Grazie,\n" +
-                "Padre Andrea Gamba";
+                "Diletta";
 
   MailApp.sendEmail(
     (mail),
@@ -134,9 +134,9 @@ function inviaMail(mail) {
   var oggetto = "Iscrizione";
   var corpo = "Buongiorno,\n\n" +
                 "Di seguito trova il form da compilare per l'iscrizione all'Oratorio estivo:\n" +
-                "https://docs.google.com/forms/d/e/1FAIpQLSe0QqZn516LhxBuGLAYdTJDQTszQLp8aHj1DeYuNrhZ_sMWsw/viewform?usp=sf_link" + "\n\n" +
+                "https://docs.google.com/forms/d/...." + "\n\n" +
                 "Grazie,\n" +
-                "Padre Andrea Gamba";
+                "Diletta";
 
   MailApp.sendEmail(
     (mail),
