@@ -8,7 +8,6 @@ Le richieste da parte del parrocco sono state due:
 1. Rendere la compilazione del Form più semplice per le persone iscritte da anni. Quindi, al fronte di un utente che negli anni passati ha già iscritto i propri figli, inviare il sondaggio con alcuni campi precompilati in base ai dati precedenti.
 2. Inviare il documento creato con i dati relativi all'iscrizione, in formato pdf, tramite mail all'utente. Questo per permettere la stampa e la firma in vista della raccolta dei documenti da parte del parroco.
 
-
 Quindi il procedimento per l'utente è il seguente:
 1. 
   1.1 Se l'utente è stato iscritto negli anni precedenti: Inserire la Mail precedentemente usata nel primo form;
