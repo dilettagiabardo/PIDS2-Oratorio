@@ -61,6 +61,7 @@ function main(info){
  * Invia mail precompilata
  *
  * @param numero=il numero di riga dove si trova la mail
+ * mail=contiene la Email a cui inviare la mail
  * @return invia la mail con il link precompilato al sondaggio
  * @customfunction
  */
@@ -88,9 +89,11 @@ function inviaMailPrecompilata(numero, mail) {
 }
 
 /**
- * Invia mail precompilata
+ * Invia mail precompilata nel caso in cui ci sia più di un figlio
  *
- * @param numero=il numero di riga dove si trova la mail
+ * @param figlio=il numero di figlio
+ * mail=contiene la Email a cui inviare la mail
+ * lista=contiene la lista con tutte le righe su cui recuperare i link
  * @return invia la mail con il link precompilato al sondaggio
  * @customfunction
  */
