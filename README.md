@@ -29,3 +29,8 @@ Il secondo permette l'invio della Mail con il pdf in allegato. Inoltre permette 
 Per quando riguarda il recupero dei dati dal database e la creazione del link precompilato si è proceduto in questo modo:
 E' stato prima generato un link precompilato del secondo form e per ogni elemento del database è stata utilizzata questa formula: =SOSTITUISCI(TestoPrincipale; TestoDaSostituire; TestoCheSostituisce)
 In modo tale da sostituire gli elementi del link e rendere il sondaggio precompilato a doc.
+
+
+
+Per far funzionare le funzioni, legate ad un determinato Google Form, è necessario copiarle su AppScript da Google Sheets (Estensioni->AppScript).
+Infine, per fare in modo che le funzioni agiscano nel momento in cui il Google Form viene inviato bisogna usare gli attivatori. In questo caso è stato generato un attivatore che ogni volta che viene inserita una nuova riga (quindi una nuova compilazione del Form) esegue la funzione afterSubmit, usando come evento "All'invio del Modulo".
