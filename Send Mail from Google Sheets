@@ -1,11 +1,11 @@
 /**
- * after permette di chiamare main dando in input i dati inviati dal modulo
+ * after permette di chiamare main dando in input i dati inviati dal Google Form
  *
  * @param e= dati contenuti all'invio del modulo
- * @return In base al valore di controllo richiama la funzione di inviaMailPrecompilata o quella di invioMail
+ * @return In base al valore di controllo richiama la funzione di inviaMailPrecompilata, invioMail o InviaMailPrecompilataFigli
  * @customfunction
  */
-function after(e) {
+function afterSubmit(e) {
 
   const info = e.namedValues; //recupero le informazioni inviate dal modulo
   main(info);
@@ -25,24 +25,24 @@ function main(info){
   var sheetD = ssD.getSheetByName("Database");  //Nome del foglio Google Sheets che contiene il database
 
   var mailC = info['Mail'][0]; //Recupero la mail in input
-  var controllo=0; 
-  var figli = 0;
-  var rigaMail = 0;
-  var fakeMail = 0;
-  var lista =[];
+  var controllo=0; //Variabile di controllo, utilizzata per controllare se la mail è presente o meno sul database
+  var figli = 0; //Variabile utilizzata per il conto dei figli assocciati ad una mail
+  var rigaMail = 0; //Variabile utilizzata per memorizzare la riga del database in cui si trova l'elemento
+  var controllo2 = 0; //Variabile si controllo
+  var lista =[]; //Lista che contiene il numero delle righe del database trovate 
 
-  for(var i=0; i<4 && fakeMail!=-1 ; i++){ //Controllo chi ha più di un figlio. E se trovo più di un figlio salvo il valore della riga dentro lista
-    var past = rigaMail;
-    var colonnaMail = sheetD.getRange(rigaMail+1, 44, sheetD.getLastRow(), 1).getValues(); 
-    rigaMail = colonnaMail.flat().indexOf(mailC)+1;
+  for(var i=0; i<4 && controllo2!=-1 ; i++){ //Controllo chi ha più di un figlio. E se trovo più di un figlio salvo il valore della riga dentro lista
+    var past = rigaMail; //memorizza il valore precedente di rigaMail
+    var colonnaMail = sheetD.getRange(rigaMail+1, 44, sheetD.getLastRow(), 1).getValues(); //Vado a prendere le righe del database a partire da rigaMail+1 fino all'ultima riga. Parto da rigaMail+1 perchè se ho già trovato un figlio non voglio ricontare nuovamente quel figlio, quindi devo partire a controllare dalla riga successiva
+    rigaMail = colonnaMail.flat().indexOf(mailC)+1; //Prendo la riga dove si trova quel determinato elemento, se non è presente viene restituito -1/0
 
-    fakeMail=rigaMail-1;
+    controllo2=rigaMail-1; 
 
-    if(rigaMail!=-1 && rigaMail!=0){
-      rigaMail=rigaMail+past;
+    if(rigaMail!=-1 && rigaMail!=0){ //Se rigaMail non è nè -1 nè 0 allora vuol dire che è stata trovata una corrispondenza nel database
+      rigaMail=rigaMail+past; 
       figli=figli+1;
-      controllo=1;
-      lista.push(fakeMail+past);
+      controllo=1; 
+      lista.push(controllo2+past); //aggiungo alla lista la riga dell'elemento
     }
   }
 
