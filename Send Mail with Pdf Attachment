@@ -35,7 +35,7 @@ function createPdf(info){
 
   const openDoc = DocumentApp.openById(newTempFile.getId());
   const body = openDoc.getBody(); //il documento viene aperto ed avviene la sostituizione dei dati
-  body.replaceText("{{Nome e cognome del genitore}}", info['Nome e cognome del genitore'][0]);
+  body.replaceText("{{Nome e cognome del genitore}}", info['Nome e cognome del genitore'][0]); //sostituisco l'elemento contenuto in "Nome e cognome del genitore" di info con l'elemento {{Nome e cognome del genitore}} nel pdf 
   body.replaceText("{{Luogo di nascita genitore}}", info['Luogo di nascita genitore'][0]);
   body.replaceText("{{Data di nascita genitore}}", info['Data di nascita genitore'][0]);
   body.replaceText("{{Indirizzo}}", info['Indirizzo'][0]);
